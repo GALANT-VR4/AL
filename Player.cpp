@@ -50,8 +50,11 @@ void Player::Rotate() {
 
 void Player::Attack() {
 	if (input_->PushKey(DIK_SPACE)) {
+		const float kBulletSpeed = 1.f;
+		Vector3 velocity(0, 0, kBulletSpeed);
+		velocity = TransformNomal(velocity, worldTransForm_.matWorld_);
 		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_, worldTransForm_.translation_);
+		newBullet->Initialize(model_, worldTransForm_.translation_,velocity);
 		bullet_ = newBullet;
 		bullets_.push_back(newBullet);
 	}
