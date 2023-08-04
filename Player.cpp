@@ -11,12 +11,12 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 }
 
 void Player::Update() {
-	bullets_.remove_if([](PlayerBullet * bullet){
+	bullets_.remove_if([](PlayerBullet* bullet) {
 		if (bullet->IsDead()) {
 			delete bullet;
 			return true;
 		}
-		return false; 
+		return false;
 	});
 	Vector3 move = {.0f, .0f, .0f};
 	const float kCharacterSpeed = 0.2f;
@@ -61,7 +61,7 @@ void Player::Attack() {
 		Vector3 velocity(0, 0, kBulletSpeed);
 		velocity = TransformNomal(velocity, worldTransForm_.matWorld_);
 		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_, worldTransForm_.translation_,velocity);
+		newBullet->Initialize(model_, worldTransForm_.translation_, velocity);
 		bullet_ = newBullet;
 		bullets_.push_back(newBullet);
 	}
@@ -70,4 +70,12 @@ void Player::Attack() {
 Player::~Player() {
 	for (PlayerBullet* bullet : bullets_)
 		delete bullet;
+}
+
+Vector3 Player::GetWorldPosition() {
+	Vector3 worldPos;
+	worldPos.x = worldTransForm_.translation_.x;
+	worldPos.y = worldTransForm_.translation_.y;
+	worldPos.z = worldTransForm_.translation_.z;
+	return worldPos;
 }

@@ -1,5 +1,6 @@
 #include "Enemy.h"
 #include "Mathematics.h"
+#include "Player.h"
 #include <cassert>
 
 void Enemy::Initialize(Model* model) {
@@ -7,7 +8,7 @@ void Enemy::Initialize(Model* model) {
 	model_ = model;
 	textureHandle_ = TextureManager::Load("tex1.png");
 	worldTransForm_.Initialize();
-	worldTransForm_.translation_ = {.0f, .0f, 50.f};
+	worldTransForm_.translation_ = {25.f, .0f, 50.f};
 
 	AppInit();
 }
@@ -21,10 +22,10 @@ void Enemy::Update() {
 		return false;
 	});
 	worldTransForm_.TransferMatrix();
-	switch (phase_) { 
+	switch (phase_) {
 	case Phase::Approach:
 	default:
-		worldTransForm_.translation_ += {.0f,.0f,-.1f};
+		worldTransForm_.translation_ += {.0f, .0f, -.1f};
 		if (worldTransForm_.translation_.z < 0)
 			phase_ = Phase::Leave;
 		fireTimer--;
@@ -49,8 +50,12 @@ void Enemy::Draw(const ViewProjection& viewProjection) {
 }
 
 void Enemy::Fire() {
-	const float kBulletSpeed = 1.f;
-	Vector3 velocity(0, 0, -kBulletSpeed);
+	const float kBulletSpeed = .05f;
+
+	Vector3 velocity =
+	    TransformNomal(
+	        (player_->GetWorldPosition() - GetWorldposition()), worldTransForm_.matWorld_) *
+	    kBulletSpeed;
 	velocity = TransformNomal(velocity, worldTransForm_.matWorld_);
 	EnemyBullet* newBullet = new EnemyBullet();
 	newBullet->Initialize(model_, worldTransForm_.translation_, velocity);
@@ -64,3 +69,11 @@ Enemy::~Enemy() {
 }
 
 void Enemy::AppInit() { fireTimer = kFireInterval; }
+
+Vector3 Enemy::GetWorldposition() {
+	Vector3 worldPos;
+	worldPos.x = worldTransForm_.translation_.x;
+	worldPos.y = worldTransForm_.translation_.y;
+	worldPos.z = worldTransForm_.translation_.z;
+	return worldPos;
+}
