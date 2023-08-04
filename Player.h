@@ -19,5 +19,5 @@ private:
 	uint32_t textureHandle_ = 0u;
 	Input* input_ = nullptr;
 	PlayerBullet* bullet_ = nullptr;
-	std::list<PlayerBullet*> bullets_;
+	std::list<PlayerBullet*>bullets_;
 };
