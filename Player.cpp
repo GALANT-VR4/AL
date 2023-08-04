@@ -28,16 +28,16 @@ void Player::Update() {
 	    worldTransForm_.scale_, worldTransForm_.rotation_, worldTransForm_.translation_);
 	Rotate();
 	Attack();
-	if (bullet_)
-		bullet_->Update();
+	for (PlayerBullet* bullet : bullets_)
+		bullet->Update();
 	worldTransForm_.TransferMatrix();
 	worldTransForm_.UpdateMatrix();
 }
 
 void Player::Draw(ViewProjection& viewProjection) {
 	model_->Draw(worldTransForm_, viewProjection, textureHandle_);
-	if (bullet_)
-		bullet_->Draw(viewProjection);
+	for (PlayerBullet* bullet : bullets_)
+		bullet->Draw(viewProjection);
 }
 
 void Player::Rotate() {
@@ -50,8 +50,14 @@ void Player::Rotate() {
 
 void Player::Attack() {
 	if (input_->PushKey(DIK_SPACE)) {
-		PlayerBullet* newBullet_ = new PlayerBullet();
-		newBullet_->Initialize(model_, worldTransForm_.translation_);
-		bullet_ = newBullet_;
+		PlayerBullet* newBullet = new PlayerBullet();
+		newBullet->Initialize(model_, worldTransForm_.translation_);
+		bullet_ = newBullet;
+		bullets_.push_back(newBullet);
 	}
+}
+
+Player::~Player() {
+	for (PlayerBullet* bullet : bullets_)
+		delete bullet;
 }
