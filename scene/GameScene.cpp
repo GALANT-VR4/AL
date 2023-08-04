@@ -33,6 +33,7 @@ void GameScene::Initialize() {
 void GameScene::Update() {
 	player_->Update();
 	enemy_->Update();
+	CheckAllCollisions();
 }
 
 void GameScene::Draw() {
@@ -80,4 +81,39 @@ void GameScene::Draw() {
 	Sprite::PostDraw();
 
 #pragma endregion
+}
+
+void GameScene::CheckAllCollisions() {
+	Vector3 posA, posB;
+	const std::list<PlayerBullet*>& playerBullets = player_->GetBullets();
+	const std::list<EnemyBullet*>& enemyBullets = enemy_->GetBullets();
+
+	posA = player_->GetWorldPosition();
+	for (EnemyBullet* bullet : enemyBullets) {
+		posB = bullet->GetWorldPosition();
+		if (pow(posB.x - posA.x, 2) + pow(posB.y - posA.y, 2) + pow(posB.z - posA.z, 2) <= 4) {
+			player_->OnCollision();
+			bullet->OnCollision();
+		}
+	}
+
+	posA = enemy_->GetWorldposition();
+	for (PlayerBullet* bullet : playerBullets) {
+		posB = bullet->GetWorldPosition();
+		if (pow(posB.x - posA.x, 2) + pow(posB.y - posA.y, 2) + pow(posB.z - posA.z, 2) <= 4) {
+			enemy_->onCollision();
+			bullet->OnCollision();
+		}
+	}
+
+	for (PlayerBullet* bulletA : playerBullets) {
+		posA = bulletA->GetWorldPosition();
+		for (EnemyBullet* bulletB : enemyBullets) {
+			posB = bulletB->GetWorldPosition();
+			if (pow(posB.x - posA.x, 2) + pow(posB.y - posA.y, 2) + pow(posB.z - posA.z, 2) <= 4) {
+				bulletA->OnCollision();
+				bulletB->OnCollision();
+			}
+		}
+	}
 }

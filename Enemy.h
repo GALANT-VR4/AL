@@ -18,6 +18,8 @@ public:
 	void AppInit();
 	void SetPlayer(Player* player) { player_ = player; }
 	Vector3 GetWorldposition();
+	void onCollision();
+	const std::list<EnemyBullet*>& GetBullets() const { return bullets_; }
 
 private:
 	WorldTransform worldTransForm_;
