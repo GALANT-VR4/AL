@@ -11,7 +11,6 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 }
 
 void Player::Update() {
-	worldTransForm_.TransferMatrix();
 	Vector3 move = {.0f, .0f, .0f};
 	const float kCharacterSpeed = 0.2f;
 	if (input_->PushKey(DIK_LEFT)) {
@@ -27,8 +26,32 @@ void Player::Update() {
 	worldTransForm_.translation_ += move;
 	worldTransForm_.matWorld_ = MakeAffineMatrix(
 	    worldTransForm_.scale_, worldTransForm_.rotation_, worldTransForm_.translation_);
+	Rotate();
+	Attack();
+	if (bullet_)
+		bullet_->Update();
+	worldTransForm_.TransferMatrix();
+	worldTransForm_.UpdateMatrix();
 }
 
 void Player::Draw(ViewProjection& viewProjection) {
 	model_->Draw(worldTransForm_, viewProjection, textureHandle_);
+	if (bullet_)
+		bullet_->Draw(viewProjection);
+}
+
+void Player::Rotate() {
+	const float kRotSpd = .02f;
+	if (input_->PushKey(DIK_A))
+		worldTransForm_.rotation_.y -= kRotSpd;
+	if (input_->PushKey(DIK_D))
+		worldTransForm_.rotation_.y += kRotSpd;
+}
+
+void Player::Attack() {
+	if (input_->PushKey(DIK_SPACE)) {
+		PlayerBullet* newBullet_ = new PlayerBullet();
+		newBullet_->Initialize(model_, worldTransForm_.translation_);
+		bullet_ = newBullet_;
+	}
 }
