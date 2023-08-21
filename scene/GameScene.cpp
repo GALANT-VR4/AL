@@ -24,7 +24,7 @@ void GameScene::Initialize() {
 	viewProjection_.Initialize();
 
 	player_ = new Player();
-	player_->Initialize(model_, textureHandle_);
+	player_->Initialize(model_, textureHandle_, {0, -5.0f, -25.0f});
 
 	enemy_ = new Enemy();
 	enemy_->Initialize(model_);
@@ -34,6 +34,8 @@ void GameScene::Initialize() {
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 	skydome_ = new Skydome();
 	skydome_->Initialize(modelSkydome_);
+
+	score_ = 0;
 }
 
 void GameScene::Update() {

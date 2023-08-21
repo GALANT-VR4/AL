@@ -3,6 +3,7 @@
 void Skydome::Initialize(Model* model) {
 	model_ = model;
 	worldTransform_.Initialize();
+	worldTransform_.scale_ = {5, 5, 5};
 }
 
 void Skydome::Update() {}

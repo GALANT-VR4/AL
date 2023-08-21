@@ -6,7 +6,7 @@
 #include <list>
 class Player {
 public:
-	void Initialize(Model* model, uint32_t textureHandle);
+	void Initialize(Model* model, uint32_t textureHandle, Vector3 playerPosition);
 	void Update();
 	void Draw(ViewProjection& viewProjection);
 	void Rotate();

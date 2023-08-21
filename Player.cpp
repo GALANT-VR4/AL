@@ -2,12 +2,13 @@
 #include "Mathematics.h"
 #include <cassert>
 
-void Player::Initialize(Model* model, uint32_t textureHandle) {
+void Player::Initialize(Model* model, uint32_t textureHandle, Vector3 playerPosition) {
 	assert(model);
 	model_ = model;
 	textureHandle_ = textureHandle;
 	worldTransForm_.Initialize();
 	input_ = Input::GetInstance();
+	worldTransForm_.translation_ += playerPosition;
 }
 
 void Player::Update() {

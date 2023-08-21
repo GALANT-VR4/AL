@@ -8,7 +8,7 @@ void Enemy::Initialize(Model* model) {
 	model_ = model;
 	textureHandle_ = TextureManager::Load("tex1.png");
 	worldTransForm_.Initialize();
-	worldTransForm_.translation_ = {25.f, .0f, 50.f};
+	worldTransForm_.translation_ = {0.f, .0f, 150.f};
 
 	AppInit();
 }
@@ -25,7 +25,7 @@ void Enemy::Update() {
 	switch (phase_) {
 	case Phase::Approach:
 	default:
-		worldTransForm_.translation_ += {.0f, .0f, -.1f};
+		worldTransForm_.translation_ += {.0f, .0f, -.0f};
 		if (worldTransForm_.translation_.z < 0)
 			phase_ = Phase::Leave;
 		fireTimer--;
