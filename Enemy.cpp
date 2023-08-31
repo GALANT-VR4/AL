@@ -1,14 +1,17 @@
 #include "Enemy.h"
+#include "ImGuiManager.h"
 #include "Mathematics.h"
 #include "Player.h"
 #include <cassert>
+#include <stdlib.h>
+#include <time.h>
 
 void Enemy::Initialize(Model* model) {
 	assert(model);
 	model_ = model;
 	textureHandle_ = TextureManager::Load("tex1.png");
 	worldTransForm_.Initialize();
-	worldTransForm_.translation_ = {25.f, .0f, 50.f};
+	worldTransForm_.translation_ = {.0f, .0f, 50.f};
 
 	AppInit();
 }
@@ -22,10 +25,12 @@ void Enemy::Update() {
 		return false;
 	});
 	worldTransForm_.TransferMatrix();
+	srand((unsigned int)clock());
+	worldTransForm_.translation_ = {float(rand() % 104) - 52, float(rand() % 58) - 29, 50.f};
 	switch (phase_) {
 	case Phase::Approach:
 	default:
-		worldTransForm_.translation_ += {.0f, .0f, -.1f};
+		worldTransForm_.translation_ += {.0f, .0f, -.0f};
 		if (worldTransForm_.translation_.z < 0)
 			phase_ = Phase::Leave;
 		fireTimer--;
@@ -44,7 +49,7 @@ void Enemy::Update() {
 }
 
 void Enemy::Draw(const ViewProjection& viewProjection) {
-	model_->Draw(worldTransForm_, viewProjection, textureHandle_);
+	//model_->Draw(worldTransForm_, viewProjection, textureHandle_);
 	for (EnemyBullet* bullet : bullets_)
 		bullet->Draw(viewProjection);
 }

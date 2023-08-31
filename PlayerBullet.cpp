@@ -18,10 +18,12 @@ void PlayerBullet::Update() {
 		isDead_ = true;
 }
 
-void PlayerBullet::Draw(const ViewProjection& viewProjection) {	
+void PlayerBullet::Draw(const ViewProjection& viewProjection) {
 	model_->Draw(worldTransForm_, viewProjection, textureHandle_);
 }
 
 void PlayerBullet::OnCollision() { isDead_ = true; }
 
 Vector3 PlayerBullet::GetWorldPosition() { return worldTransForm_.translation_; }
+
+// void PlayerBullet::SetParent(const WorldTransform* parent) { worldTransForm_.parent_ = parent; }

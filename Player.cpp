@@ -1,13 +1,15 @@
 #include "Player.h"
+#include "ImGuiManager.h"
 #include "Mathematics.h"
 #include <cassert>
 
-void Player::Initialize(Model* model, uint32_t textureHandle) {
+void Player::Initialize(Model* model, uint32_t textureHandle, Vector3 playerPosition) {
 	assert(model);
 	model_ = model;
 	textureHandle_ = textureHandle;
 	worldTransForm_.Initialize();
 	input_ = Input::GetInstance();
+	worldTransForm_.translation_ += playerPosition;
 }
 
 void Player::Update() {
@@ -31,6 +33,14 @@ void Player::Update() {
 		move.y += kCharacterSpeed;
 	}
 	worldTransForm_.translation_ += move;
+	if (worldTransForm_.translation_.y > 8.6)
+		worldTransForm_.translation_.y = 8.6f;
+	if (worldTransForm_.translation_.y < -8.6)
+		worldTransForm_.translation_.y = -8.6f;
+	if (worldTransForm_.translation_.x > 14.6)
+		worldTransForm_.translation_.x = 14.6f;
+	if (worldTransForm_.translation_.x < -14.6)
+		worldTransForm_.translation_.x = -14.6f;
 	worldTransForm_.matWorld_ = MakeAffineMatrix(
 	    worldTransForm_.scale_, worldTransForm_.rotation_, worldTransForm_.translation_);
 	Rotate();
@@ -39,6 +49,9 @@ void Player::Update() {
 		bullet->Update();
 	worldTransForm_.TransferMatrix();
 	worldTransForm_.UpdateMatrix();
+	ImGui::Begin("player.cpp update");
+	ImGui::DragInt("score", &score_, .1f);
+	ImGui::End();
 }
 
 void Player::Draw(ViewProjection& viewProjection) {
@@ -53,10 +66,17 @@ void Player::Rotate() {
 		worldTransForm_.rotation_.y -= kRotSpd;
 	if (input_->PushKey(DIK_D))
 		worldTransForm_.rotation_.y += kRotSpd;
+	if (input_->PushKey(DIK_W))
+		worldTransForm_.rotation_.x -= kRotSpd;
+	if (input_->PushKey(DIK_S))
+		worldTransForm_.rotation_.x += kRotSpd;
 }
 
 void Player::Attack() {
-	if (input_->PushKey(DIK_SPACE)) {
+	fireTimer_--;
+	if (input_->PushKey(DIK_SPACE) && fireTimer_ < 0) {
+		fireTimer_ = 15;
+		audio_->PlayWave(attackAudioHandle_);
 		const float kBulletSpeed = 1.f;
 		Vector3 velocity(0, 0, kBulletSpeed);
 		velocity = TransformNomal(velocity, worldTransForm_.matWorld_);
@@ -80,4 +100,9 @@ Vector3 Player::GetWorldPosition() {
 	return worldPos;
 }
 
-void Player::OnCollision() {}
+void Player::OnCollision() {
+	hp_--;
+	audio_->PlayWave(hitAudiohandle_);
+}
+
+void Player::SetParent(const WorldTransform* parent) { worldTransForm_.parent_ = parent; }
